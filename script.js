@@ -4,31 +4,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Example marker
+// Define a marker and attach a pop-up with a "Learn More" button
 var marker = L.marker([43.4929, -112.0401]).addTo(map);
-marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
+var popupContent = `
+    <div>
+        <h3>Idaho National Laboratory</h3>
+        <p>Idaho Falls</p>
+        <button onclick="showInfoCard('Idaho National Laboratory', 'A detailed paragraph about the Idaho National Laboratory...')">Learn More</button>
+    </div>
+`;
+
+marker.bindPopup(popupContent);
 
 // Function to show the information card
-function showCard(title, details) {
-    document.getElementById('infoCard').style.display = 'block';
+function showInfoCard(title, details) {
     document.getElementById('projectTitle').innerText = title;
     document.getElementById('projectDetails').innerText = details;
+    document.getElementById('infoCard').style.display = 'block';
 }
 
 // Function to hide the information card
 function hideCard() {
     document.getElementById('infoCard').style.display = 'none';
 }
-
-// Close the card when clicking outside
-window.onclick = function(event) {
-    var modal = document.getElementById('infoCard');
-    if (event.target == modal) {
-        hideCard();
-    }
-}
-
-// Example of attaching a click event to a marker
-marker.on('click', function() {
-    showCard("DOE Project", "This is an example of how details might be shown.");
-});
