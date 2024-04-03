@@ -6,11 +6,11 @@
     <title>DOE Project Locations</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <!-- Leaflet.markercluster CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
-    <!-- Leaflet Awesome Markers CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
+    <!-- Include jQuery UI CSS for Autocomplete -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 <body>
 
@@ -28,8 +28,7 @@
 
 <div id="overlay" class="overlay"></div> <!-- Overlay for dimming the map -->
 
-<!-- Information Card -->
-<div id="infoCard" class="info-card">
+<div id="infoCard" class="info-card"> <!-- Information Card -->
     <div class="card-content">
         <span class="close-button" onclick="hideCard()">&times;</span>
         <h2 id="projectTitle">Project Title</h2>
@@ -39,9 +38,8 @@
 
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Leaflet.markercluster JavaScript -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> <!-- jQuery UI for Autocomplete -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
-<!-- Leaflet Awesome Markers JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
 <script src="script.js"></script>
 </body>
