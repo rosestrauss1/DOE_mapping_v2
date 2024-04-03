@@ -67,12 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     const results = data.features.filter(feature => {
                         const projectName = feature.properties['Project Name'].toLowerCase();
-                        const city = feature.properties.City.toLowerCase();
-                        const state = feature.properties.State.toLowerCase();
                         const term = request.term.toLowerCase();
-                        return projectName.includes(term) || city.includes(term) || state.includes(term);
+                        return projectName.includes(term);
                     }).map(feature => ({
-                        label: feature.properties['Project Name'] + ' - ' + feature.properties.City + ', ' + feature.properties.State,
+                        label: feature.properties['Project Name'],
                         value: feature.properties['Project Name']
                     }));
                     response(results);
@@ -83,6 +81,58 @@ document.addEventListener('DOMContentLoaded', function() {
             // Handle selection
             // For now, let's just log the selected project
             console.log("Selected project:", ui.item.value);
+        }
+    });
+
+    // Autocomplete for city search
+    $("#citySearch").autocomplete({
+        source: function(request, response) {
+            // Fetch data and filter based on search term
+            fetch('projects.geojson')
+                .then(response => response.json())
+                .then(data => {
+                    const results = data.features.filter(feature => {
+                        const city = feature.properties.City.toLowerCase();
+                        const term = request.term.toLowerCase();
+                        return city.includes(term);
+                    }).map(feature => ({
+                        label: feature.properties.City,
+                        value: feature.properties.City
+                    }));
+                    response(results);
+                });
+        },
+        minLength: 2, // Minimum characters before triggering autocomplete
+        select: function(event, ui) {
+            // Handle selection
+            // For now, let's just log the selected city
+            console.log("Selected city:", ui.item.value);
+        }
+    });
+
+    // Autocomplete for state search
+    $("#stateSearch").autocomplete({
+        source: function(request, response) {
+            // Fetch data and filter based on search term
+            fetch('projects.geojson')
+                .then(response => response.json())
+                .then(data => {
+                    const results = data.features.filter(feature => {
+                        const state = feature.properties.State.toLowerCase();
+                        const term = request.term.toLowerCase();
+                        return state.includes(term);
+                    }).map(feature => ({
+                        label: feature.properties.State,
+                        value: feature.properties.State
+                    }));
+                    response(results);
+                });
+        },
+        minLength: 2, // Minimum characters before triggering autocomplete
+        select: function(event, ui) {
+            // Handle selection
+            // For now, let's just log the selected state
+            console.log("Selected state:", ui.item.value);
         }
     });
 });
