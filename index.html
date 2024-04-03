@@ -13,14 +13,16 @@
     <h1>DOE Project Locations</h1>
 </header>
 
-<div id="map" style="width: 100%; height: 600px;">
-    <div class="search-box">
-        <input type="text" id="search-name" placeholder="Project Name">
-        <input type="text" id="search-city" placeholder="City">
-        <input type="text" id="search-state" placeholder="State">
-        <button onclick="searchProject()">Search</button>
-    </div>
+<div id="map" style="width: 100%; height: 600px;"></div>
+
+<!-- Search Box and Results Container -->
+<div class="search-box">
+    <input type="text" id="search-name" placeholder="Project Name" onkeyup="suggestProjects()">
+    <input type="text" id="search-city" placeholder="City" onkeyup="suggestProjects()">
+    <input type="text" id="search-state" placeholder="State" onkeyup="suggestProjects()">
+    <button onclick="searchProject()">Search</button>
 </div>
+<div id="search-results" class="search-results"></div>
 
 <div id="overlay" class="overlay"></div> <!-- Overlay for dimming the map -->
 
