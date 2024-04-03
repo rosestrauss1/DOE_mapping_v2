@@ -5,28 +5,47 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Assuming the overlay is added directly in HTML, so we don't need to create it dynamically
-    var overlay = document.getElementById('overlay');
+    // Create marker cluster group
+    var markers = L.markerClusterGroup();
+   // Fetch GeoJSON data
+    fetch('projects.geojson')
+        .then(response => response.json())
+        .then(data => {
+            // Iterate through each feature
+            data.features.forEach(feature => {
+                var marker;
+                // Create custom marker based on project amount
+                if (feature.properties['Funding Amount'] > 1000000) {
+                    marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                        icon: L.AwesomeMarkers.icon({
+                            icon: 'star',
+                            markerColor: 'green'
+                        })
+                    });
+                } else {
+                    marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+                }
+                
+                // Create popup content
+                var popupContent = `
+                    <div>
+                        <h3>${feature.properties['Project Name']}</h3>
+                        <p>${feature.properties.City}, ${feature.properties.State}</p>
+                        <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
+                        <button onclick="showInfoCard(event, '${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
+                    </div>
+                `;
 
-    function loadProjectLocations() {
-        fetch('projects.geojson') // Make sure this path is correct
-            .then(response => response.json())
-            .then(data => {
-                L.geoJson(data, {
-                    onEachFeature: function(feature, layer) {
-                        var popupContent = `
-                            <div>
-                                <h3>${feature.properties['Project Name']}</h3>
-                                <p>${feature.properties.City}, ${feature.properties.State}</p>
-                                <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
-                                <button onclick="showInfoCard(event, '${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
-                            </div>
-                        `;
-                        layer.bindPopup(popupContent);
-                    }
-                }).addTo(map);
+                // Bind popup to marker
+                marker.bindPopup(popupContent);
+                
+                // Add marker to marker cluster group
+                markers.addLayer(marker);
             });
-    }
+
+            // Add marker cluster group to map
+            map.addLayer(markers);
+        });
 
     window.showInfoCard = function(e, projectName, city, state, fundingAmount) {
         e.preventDefault(); // Prevent default action (for anchor tags, if used)
