@@ -30,34 +30,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Fetch GeoJSON data
-    fetch('projects.geojson')
-        .then(response => response.json())
-        .then(data => {
-            // Iterate through each feature
-            data.features.forEach(feature => {
-                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
-                
-                // Create popup content
-                var popupContent = `
-                    <div>
-                        <h3>${feature.properties['Project Name']}</h3>
-                        <p>${feature.properties.City}, ${feature.properties.State}</p>
-                        <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
-                        <button onclick="showInfoCard(event, '${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
-                    </div>
-                `;
-
-                // Bind popup to marker
-                marker.bindPopup(popupContent);
-                
-                // Add marker to marker cluster group
-                markers.addLayer(marker);
+    // Fetch GeoJSON data and load project locations
+    function loadProjectLocations() {
+        fetch('projects.geojson')
+            .then(response => response.json())
+            .then(data => {
+                // Iterate through each feature
+                data.features.forEach(feature => {
+                    var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+                    
+                    // Create popup content
+                    var popupContent = `
+                        <div>
+                            <h3>${feature.properties['Project Name']}</h3>
+                            <p>${feature.properties.City}, ${feature.properties.State}</p>
+                            <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
+                            <button onclick="showInfoCard(event, '${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
+                        </div>
+                    `;
+    
+                    // Bind popup to marker
+                    marker.bindPopup(popupContent);
+                    
+                    // Add marker to marker cluster group
+                    markers.addLayer(marker);
+                });
+    
+                // Add marker cluster group to map
+                map.addLayer(markers);
             });
-
-            // Add marker cluster group to map
-            map.addLayer(markers);
-        });
+    }
 
     // Function to show information card
     window.showInfoCard = function(e, projectName, city, state, fundingAmount) {
@@ -169,4 +171,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
