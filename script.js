@@ -6,25 +6,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }).addTo(map);
 
     // Create marker cluster group
-    var markers = L.markerClusterGroup();
-   // Fetch GeoJSON data
+    var markers = L.markerClusterGroup({
+        // Customize the cluster marker icon based on the number of markers it contains
+        iconCreateFunction: function(cluster) {
+            var childCount = cluster.getChildCount();
+            var size = 40;
+
+            if (childCount < 10) {
+                size = 40;
+            } else if (childCount < 100) {
+                size = 50;
+            } else if (childCount < 1000) {
+                size = 60;
+            } else {
+                size = 70;
+            }
+
+            return L.divIcon({
+                html: '<div style="width:' + size + 'px;height:' + size + 'px;line-height:' + size + 'px;text-align:center;background-color:rgba(255, 0, 0, 0.5);border-radius:50%;color:white;font-weight:bold;">' + childCount + '</div>',
+                className: 'marker-cluster',
+                iconSize: L.point(size, size)
+            });
+        }
+    });
+
+    // Fetch GeoJSON data
     fetch('projects.geojson')
         .then(response => response.json())
         .then(data => {
             // Iterate through each feature
             data.features.forEach(feature => {
-                var marker;
-                // Create custom marker based on project amount
-                if (feature.properties['Funding Amount'] > 1000000) {
-                    marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                        icon: L.AwesomeMarkers.icon({
-                            icon: 'star',
-                            markerColor: 'green'
-                        })
-                    });
-                } else {
-                    marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
-                }
+                var marker = L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
                 
                 // Create popup content
                 var popupContent = `
@@ -47,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             map.addLayer(markers);
         });
 
+    // Function to show information card
     window.showInfoCard = function(e, projectName, city, state, fundingAmount) {
         e.preventDefault(); // Prevent default action (for anchor tags, if used)
         map.closePopup(); // Close any open Leaflet pop-up
@@ -59,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.style.display = 'block';
     };
 
+    // Function to hide information card
     window.hideCard = function() {
         document.getElementById('infoCard').style.display = 'none';
         overlay.style.display = 'none';
