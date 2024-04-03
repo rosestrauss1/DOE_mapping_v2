@@ -6,7 +6,7 @@ body, html {
 }
 
 header {
-    background-color: #004165; /* Adjust the color to match your theme */
+    background-color: #004165;
     color: #fff;
     padding: 20px 40px;
     text-align: center;
@@ -14,95 +14,86 @@ header {
 
 #map {
     width: 100%;
-    height: 600px; /* Adjust the height as needed */
+    height: 600px;
 }
 
-.search-box {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px; /* Spacing between search inputs and the button */
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    background-color: #f8f9fa; /* Light background for the search area */
+.search-container {
+    text-align: center;
+    margin-top: 20px;
 }
 
-.search-box input[type="text"],
-.search-box button {
+#search-input {
     padding: 10px;
+    width: 300px; /* Adjust width as needed */
+    margin-bottom: 10px;
+}
+
+#search-results {
+    display: none; /* Initially hidden, displayed when results are available */
+    background: #fff;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px; /* Larger font size for better readability */
-}
-
-.search-box button {
-    background-color: #007bff; /* A blue color for the button */
-    color: white;
-    cursor: pointer;
-}
-
-.search-box button:hover {
-    background-color: #0056b3; /* A darker blue on hover */
-}
-
-.search-results {
-    display: none; /* Initially hidden */
+    width: 300px;
+    margin: auto;
     position: absolute;
-    z-index: 1001; /* Above everything else */
-    width: calc(100% - 40px); /* Assuming the same width as the search box */
-    max-height: 300px; /* Limiting the height of the results */
-    overflow-y: auto; /* Allow scrolling within the results */
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    margin-top: 5px; /* Spacing between the search box and results */
+    z-index: 1001;
 }
 
-.search-suggestion {
+.search-result {
     padding: 5px 10px;
-    border-radius: 3px;
     cursor: pointer;
 }
 
-.search-suggestion:hover {
-    background-color: #f0f0f0; /* Light grey background for hover state */
+.search-result:hover {
+    background-color: #f0f0f0;
 }
 
-#overlay {
-    display: none; /* Initially hidden */
+.overlay {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-    z-index: 1000; /* Ensure it covers the map but is below the search results */
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
 }
 
 .info-card {
-    display: none; /* Initially hidden */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1002; /* Above overlay and search results */
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 90%;
-    max-width: 400px; /* Maximum width of the card */
+    background-color: #fff;
     padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    z-index: 1002;
 }
 
 .close-button {
+    color: #aaa;
     float: right;
     font-size: 24px;
     cursor: pointer;
-    color: #aaa;
 }
 
 .close-button:hover {
-    color: #777; /* Darker grey on hover */
+    color: black;
+}
+
+button {
+    background-color: #004165;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #002D62;
 }
