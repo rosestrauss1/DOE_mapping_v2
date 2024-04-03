@@ -1,31 +1,41 @@
-// Initialize the map and set its view to a specific location
-var map = L.map('map').setView([43.4929, -112.0401], 13);
+// Initialize the map and set its view
+var map = L.map('map').setView([43.4929, -112.0401], 5); // Adjust the center and zoom level to your preference
 
 // Add an OpenStreetMap tile layer to the map
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Define a marker and attach a pop-up with a "Learn More" button
-var marker = L.marker([43.4929, -112.0401]).addTo(map);
-var popupContent = `
-    <div>
-        <h3>Idaho National Laboratory</h3>
-        <p>Idaho Falls</p>
-        <button onclick="showInfoCard('Idaho National Laboratory', 'A detailed paragraph about the Idaho National Laboratory...')">Learn More</button>
-    </div>
-`;
+// Function to load and display GeoJSON data
+function loadProjectLocations() {
+    fetch('projects.geojson') // Adjust the file path if your GeoJSON file is located elsewhere
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            // Add GeoJSON layer to the map with custom pop-ups
+            L.geoJson(data, {
+                onEachFeature: function(feature, layer) {
+                    // Customize this part based on your GeoJSON properties
+                    var popupContent = `
+                        <div>
+                            <h3>${feature.properties['Project Name']}</h3>
+                            <p>${feature.properties.City}, ${feature.properties.State}</p>
+                            <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
+                            <button onclick="showInfoCard('${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
+                        </div>
+                    `;
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(map);
+        });
+}
 
-marker.bindPopup(popupContent);
-
-// Function to show the information card with project details
-function showInfoCard(title, details) {
-    // Close any open Leaflet pop-up
-    map.closePopup();
-    
-    // Set the title and details of the project in the information card
-    document.getElementById('projectTitle').innerText = title;
-    document.getElementById('projectDetails').innerText = details;
+// Function to show the information card
+function showInfoCard(projectName, city, state, fundingAmount) {
+    // Update the content of the information card
+    document.getElementById('projectTitle').innerText = projectName;
+    document.getElementById('projectDetails').innerHTML = `Location: ${city}, ${state}<br>Funding Amount: $${Number(fundingAmount).toLocaleString()}`;
     
     // Display the information card
     document.getElementById('infoCard').style.display = 'block';
@@ -39,14 +49,10 @@ function hideCard() {
 // Close the card when clicking outside
 window.onclick = function(event) {
     var modal = document.getElementById('infoCard');
-    if (event.target == modal) {
+    if (event.target === modal) {
         hideCard();
     }
 }
 
-// Optional: Adjust the window.onclick function to check for clicks not just on the modal but also the close button
-window.addEventListener('click', function(e) {
-    if (e.target.className === "close-button") {
-        hideCard();
-    }
-});
+// Call the function to load and display the project locations
+loadProjectLocations();
