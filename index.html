@@ -6,13 +6,23 @@
     <title>DOE Project Locations</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Leaflet.markercluster CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" />
+    <!-- Leaflet Awesome Markers CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css" />
 </head>
 <body>
 
 <header>
     <h1>DOE Project Locations</h1>
 </header>
+
+<div class="search-container">
+    <input type="text" id="projectSearch" placeholder="Search by project...">
+    <input type="text" id="citySearch" placeholder="Search by city...">
+    <input type="text" id="stateSearch" placeholder="Search by state...">
+</div>
 
 <div id="map" style="width: 100%; height: 600px;"></div>
 
@@ -27,15 +37,12 @@
     </div>
 </div>
 
-<div class="search-container">
-    <input type="text" id="projectSearch" placeholder="Search by project...">
-    <input type="text" id="citySearch" placeholder="Search by city...">
-    <input type="text" id="stateSearch" placeholder="Search by state...">
-</div>
-
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- Leaflet.markercluster JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+<!-- Leaflet Awesome Markers JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
