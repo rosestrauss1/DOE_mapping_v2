@@ -1,73 +1,29 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var map = L.map('map').setView([43.4929, -112.0401], 5);
+var map = L.map('map').setView([43.4929, -112.0401], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 
-    var projectMarkers = [];
+// Define a marker and attach a pop-up with a "Learn More" button
+var marker = L.marker([43.4929, -112.0401]).addTo(map);
+var popupContent = `
+    <div>
+        <h3>Idaho National Laboratory</h3>
+        <p>Idaho Falls</p>
+        <button onclick="showInfoCard('Idaho National Laboratory', 'A detailed paragraph about the Idaho National Laboratory...')">Learn More</button>
+    </div>
+`;
 
-    function loadProjectLocations() {
-        fetch('projects.geojson')
-            .then(response => response.json())
-            .then(data => {
-                L.geoJson(data, {
-                    onEachFeature: function(feature, layer) {
-                        const projectName = feature.properties['Project Name'];
-                        const city = feature.properties['City'];
-                        const state = feature.properties['State'];
-                        const fundingAmount = feature.properties['Funding Amount'];
+marker.bindPopup(popupContent);
 
-                        var popupContent = `
-                            <div>
-                                <h3>${projectName}</h3>
-                                <p>${city}, ${state}</p>
-                                <p>Funding Amount: $${fundingAmount.toLocaleString()}</p>
-                                <button onclick="showInfoCard('${projectName}', '${city}', '${state}', '${fundingAmount}')">Learn More</button>
-                            </div>
-                        `;
-                        layer.bindPopup(popupContent);
+// Function to show the information card
+function showInfoCard(title, details) {
+    document.getElementById('projectTitle').innerText = title;
+    document.getElementById('projectDetails').innerText = details;
+    document.getElementById('infoCard').style.display = 'block';
+}
 
-                        projectMarkers.push({ projectName, city, state, fundingAmount, layer });
-                    }
-                }).addTo(map);
-            });
-    }
-
-    window.showInfoCard = function(projectName, city, state, fundingAmount) {
-        var infoContent = `
-            <div>
-                <h3>${projectName}</h3>
-                <p>Location: ${city}, ${state}</p>
-                <p>Funding Amount: $${fundingAmount.toLocaleString()}</p>
-                <p>More details about the project...</p>
-            </div>
-        `;
-
-        L.popup()
-            .setLatLng(map.getCenter())
-            .setContent(infoContent)
-            .openOn(map);
-    };
-
-    function searchProject() {
-        var nameInput = document.getElementById('search-name').value.trim().toLowerCase();
-        var cityInput = document.getElementById('search-city').value.trim().toLowerCase();
-        var stateInput = document.getElementById('search-state').value.trim().toLowerCase();
-
-        projectMarkers.forEach(({ projectName, city, state, fundingAmount, layer }) => {
-            var projectNameLower = projectName.toLowerCase();
-            var cityLower = city.toLowerCase();
-            var stateLower = state.toLowerCase();
-
-            if (projectNameLower.includes(nameInput) && cityLower.includes(cityInput) && stateLower.includes(stateInput)) {
-                map.setView(layer.getLatLng(), 14);
-                layer.openPopup();
-            }
-        });
-    }
-
-    loadProjectLocations();
-
-    document.getElementById('search-button').addEventListener('click', searchProject);
-});
+// Function to hide the information card
+function hideCard() {
+    document.getElementById('infoCard').style.display = 'none';
+}
