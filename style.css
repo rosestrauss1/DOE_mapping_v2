@@ -1,0 +1,58 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #004165; /* DOE Blue */
+    color: #fff;
+    padding: 20px 40px;
+    text-align: center;
+}
+
+.info-card {
+    display: none; /* Hidden by default */
+    position: fixed; /* Popup style */
+    background-color: #fff;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 5px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px; /* Card width */
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+.card-content h2, .card-content p {
+    margin: 10px 0;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button {
+    background-color: #004165; /* DOE Blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #002D62; /* Darker blue */
+}
