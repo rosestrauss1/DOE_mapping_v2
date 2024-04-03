@@ -5,63 +5,69 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    var projectMarkers = []; // This will hold marker objects for searching
+    var projectMarkers = [];
 
-    // Function to load and display GeoJSON data on the map
     function loadProjectLocations() {
-        // Example fetch, replace 'projects.geojson' with your GeoJSON path
-        fetch('projects.geojson').then(response => response.json()).then(data => {
-            L.geoJson(data, {
-                onEachFeature: function(feature, layer) {
-                    // Construct and assign a popup to each feature
-                    const { 'Project Name': projectName, 'City': city, 'State': state, 'Funding Amount': fundingAmount } = feature.properties;
-                    var popupContent = `<h3>${projectName}</h3><p>${city}, ${state}</p><p>Funding Amount: $${fundingAmount.toLocaleString()}</p>`;
-                    layer.bindPopup(popupContent);
+        fetch('projects.geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJson(data, {
+                    onEachFeature: function(feature, layer) {
+                        const projectName = feature.properties['Project Name'];
+                        const city = feature.properties['City'];
+                        const state = feature.properties['State'];
+                        const fundingAmount = feature.properties['Funding Amount'];
 
-                    // Add to projectMarkers array for search functionality
-                    projectMarkers.push({ projectName, city, state, layer });
-                }
-            }).addTo(map);
-        });
+                        var popupContent = `
+                            <div>
+                                <h3>${projectName}</h3>
+                                <p>${city}, ${state}</p>
+                                <p>Funding Amount: $${fundingAmount.toLocaleString()}</p>
+                                <button onclick="showInfoCard('${projectName}', '${city}', '${state}', '${fundingAmount}')">Learn More</button>
+                            </div>
+                        `;
+                        layer.bindPopup(popupContent);
+
+                        projectMarkers.push({ projectName, city, state, fundingAmount, layer });
+                    }
+                }).addTo(map);
+            });
     }
 
-    // Implement searchProjects to filter projectMarkers and show results
-    function searchProjects() {
-        // Get search input values
-        const nameVal = document.getElementById('search-name').value.toLowerCase();
-        const cityVal = document.getElementById('search-city').value.toLowerCase();
-        const stateVal = document.getElementById('search-state').value.toLowerCase();
-        const resultsContainer = document.getElementById('search-results');
+    window.showInfoCard = function(projectName, city, state, fundingAmount) {
+        var infoContent = `
+            <div>
+                <h3>${projectName}</h3>
+                <p>Location: ${city}, ${state}</p>
+                <p>Funding Amount: $${fundingAmount.toLocaleString()}</p>
+                <p>More details about the project...</p>
+            </div>
+        `;
 
-        // Clear previous results
-        resultsContainer.innerHTML = '';
-        let resultsFound = false;
-
-        projectMarkers.forEach(({ projectName, city, state, layer }) => {
-            // Check if the project matches the search criteria
-            if (projectName.toLowerCase().includes(nameVal) &&
-                city.toLowerCase().includes(cityVal) &&
-                state.toLowerCase().includes(stateVal)) {
-                // Display matching projects as clickable items in search-results div
-                const resultItem = document.createElement('div');
-                resultItem.textContent = `${projectName} - ${city}, ${state}`;
-                resultItem.onclick = () => { // Clicking a result focuses the map on the project and opens its popup
-                    map.setView(layer.getLatLng(), 14);
-                    layer.openPopup();
-                };
-                resultsContainer.appendChild(resultItem);
-                resultsFound = true;
-            }
-        });
-
-        // Show or hide the results container
-        resultsContainer.style.display = resultsFound ? '' : 'none';
-    }
-
-    // Show or hide the information card (modal)
-    window.hideCard = function() {
-        document.getElementById('infoCard').style.display = 'none';
+        L.popup()
+            .setLatLng(map.getCenter())
+            .setContent(infoContent)
+            .openOn(map);
     };
 
+    function searchProject() {
+        var nameInput = document.getElementById('search-name').value.trim().toLowerCase();
+        var cityInput = document.getElementById('search-city').value.trim().toLowerCase();
+        var stateInput = document.getElementById('search-state').value.trim().toLowerCase();
+
+        projectMarkers.forEach(({ projectName, city, state, fundingAmount, layer }) => {
+            var projectNameLower = projectName.toLowerCase();
+            var cityLower = city.toLowerCase();
+            var stateLower = state.toLowerCase();
+
+            if (projectNameLower.includes(nameInput) && cityLower.includes(cityInput) && stateLower.includes(stateInput)) {
+                map.setView(layer.getLatLng(), 14);
+                layer.openPopup();
+            }
+        });
+    }
+
     loadProjectLocations();
+
+    document.getElementById('search-button').addEventListener('click', searchProject);
 });
