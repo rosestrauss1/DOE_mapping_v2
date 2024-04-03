@@ -7,24 +7,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var projectMarkers = [];
 
-    function loadProjectLocations() {
-        // Assuming 'projects.geojson' is your data source
-        fetch('projects.geojson')
-            .then(response => response.json())
-            .then(data => {
-                L.geoJson(data, {
-                    onEachFeature: function(feature, layer) {
-                        const projectName = feature.properties['Project Name'];
-                        const city = feature.properties['City'];
-                        const state = feature.properties['State'];
-                        projectMarkers.push({ projectName, city, state, layer });
+ function loadProjectLocations() {
+    fetch('projects.geojson')
+        .then(response => response.json())
+        .then(data => {
+            L.geoJson(data, {
+                onEachFeature: function(feature, layer) {
+                    const projectName = feature.properties['Project Name'];
+                    const city = feature.properties['City'];
+                    const state = feature.properties['State'];
+                    const fundingAmount = feature.properties['Funding Amount'];
 
-                        var popupContent = `...`; // Construct your popup content here
-                        layer.bindPopup(popupContent);
-                    }
-                }).addTo(map);
-            });
-    }
+                    // Constructing popup content dynamically
+                    var popupContent = `
+                        <div>
+                            <h3>${projectName}</h3>
+                            <p>${city}, ${state}</p>
+                            <p>Funding Amount: $${fundingAmount.toLocaleString()}</p>
+                            <button onclick="showInfoCard(event, '${projectName.replace(/'/g, "\\'")}', '${city.replace(/'/g, "\\'")}', '${state.replace(/'/g, "\\'")}', '${fundingAmount}')">Learn More</button>
+                        </div>
+                    `;
+                    layer.bindPopup(popupContent);
+
+                    // Adding the feature and layer to projectMarkers for search functionality
+                    projectMarkers.push({
+                        projectName,
+                        city,
+                        state,
+                        fundingAmount, // Assuming you want to search by funding amount as well
+                        layer
+                    });
+                }
+            }).addTo(map);
+        });
+}
 
     function searchProject() {
         const nameInput = document.getElementById('search-name').value.trim().toLowerCase();
