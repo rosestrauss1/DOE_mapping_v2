@@ -5,21 +5,23 @@ document.addEventListener('DOMContentLoaded', function() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Assuming the overlay is added directly in HTML, so we don't need to create it dynamically
-    var overlay = document.getElementById('overlay');
+    var projectMarkers = {}; // Store markers for searching
 
     function loadProjectLocations() {
-        fetch('projects.geojson') // Make sure this path is correct
+        fetch('projects.geojson')
             .then(response => response.json())
             .then(data => {
                 L.geoJson(data, {
                     onEachFeature: function(feature, layer) {
+                        var projectName = feature.properties['Project Name'];
+                        projectMarkers[projectName] = layer; // Store marker for search
+                        
                         var popupContent = `
                             <div>
-                                <h3>${feature.properties['Project Name']}</h3>
+                                <h3>${projectName}</h3>
                                 <p>${feature.properties.City}, ${feature.properties.State}</p>
                                 <p>Funding Amount: $${feature.properties['Funding Amount'].toLocaleString()}</p>
-                                <button onclick="showInfoCard(event, '${feature.properties['Project Name']}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
+                                <button onclick="showInfoCard(event, '${projectName}', '${feature.properties.City}', '${feature.properties.State}', '${feature.properties['Funding Amount']}')">Learn More</button>
                             </div>
                         `;
                         layer.bindPopup(popupContent);
@@ -29,32 +31,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.showInfoCard = function(e, projectName, city, state, fundingAmount) {
-        e.preventDefault(); // Prevent default action (for anchor tags, if used)
-        map.closePopup(); // Close any open Leaflet pop-up
-        
+        e.preventDefault();
+        map.closePopup();
+
         document.getElementById('projectTitle').innerText = projectName;
         document.getElementById('projectDetails').innerHTML = `Location: ${city}, ${state}<br>Funding Amount: $${Number(fundingAmount).toLocaleString()}`;
-        
-        // Display the information card and the overlay
         document.getElementById('infoCard').style.display = 'block';
-        overlay.style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
     };
 
     window.hideCard = function() {
         document.getElementById('infoCard').style.display = 'none';
-        overlay.style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
     };
 
-    // Enhancing overlay click to hide the info card and overlay
-    overlay.addEventListener('click', function() {
-        hideCard();
-    });
+    function searchProject() {
+        const searchValue = document.getElementById('search-input').value.trim();
+        const marker = projectMarkers[searchValue];
 
-    // Preventing clicks on the info card from hiding it (stops event propagation)
-    document.getElementById('infoCard').addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
+        if (marker) {
+            map.setView(marker.getLatLng(), 14);
+            marker.openPopup();
+        } else {
+            alert('Project not found');
+        }
+    }
 
-    // Load project locations
+    window.searchProject = searchProject; // Make searchProject function globally accessible for the HTML button click
+
     loadProjectLocations();
 });
+
